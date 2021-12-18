@@ -1,122 +1,135 @@
 <template>
-  <div>
-      <!-- Sing in  Form -->
-        <section class="sign-in" id="sign-in">
+    <div>
+        <section class="signup" id="sign-up" style=" margin-top: 0px;">
             <div class="container-login">
-                <div class="signin-content">
-                    <div class="signin-image">
-                        <figure><img src="@/assets/images/signin-image.jpg" alt="sing up image"></figure>
-                        <router-link to="/register" class="signup-image-link">Create an account</router-link>
-                    </div>
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">Đăng ký</h2>
+                        
+                            <b-alert
+                              variant="danger"
+                              dismissible
+                              fade
+                              :show="showDismissibleAlert"
+                              @dismissed="showDismissibleAlert=false">
+                              Email đã được sử dụng!
+                            </b-alert>
 
-                    <div class="signin-form">
-                        <h2 class="form-title">Đăng nhập</h2>
-                        <div class="register-form" id="login-form" >
-                            
-                            <div style="font-family: roboto; color: red; height: 30px; margin-top: -30px;">
-                                <p id="login_fail" style="color: red;">{{ mess }}</p>
+                        <div class="register-form validate-form" id="register-form" >
+                            <div class="form-group" data-validate="First Name is required">
+                                <label for="first-name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input class="input100" v-model="firstname" type="text" placeholder="Họ"/>
                             </div>
-
-                            <div class="form-group">
-                                <label for="user_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="email" v-model="username"  name="username" id="user_name" placeholder="Email" required/>
+                            <div class="form-group" data-validate="Last Name is required">
+                                <label for="last-name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input class="input100" v-model="lastname" type="text" placeholder="Tên"/>
                             </div>
-                            <div class="form-group">
-                                <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" v-model="password" name="password" id="pass_word" placeholder="Password" required/>
+                            <div class="form-group" data-validate="Email is required">
+                                <label for="email"><i class="zmdi zmdi-email"></i></label>
+                                <input class="input100" v-model="username" type="email" placeholder="Email"/>
                             </div>
-                            <div class="form-group">
-                                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-                                <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
+                            <div class="form-group" data-validate="Password is required">
+                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                                <input class="input100" v-model="password" type="password" placeholder="Nhập mật khẩu"/>
+                            </div>
+                            <div class="form-group" data-validate="Repassword is required">
+                                <span :class="{noticepass: checkpass}" style="color:red; font-size: 13px;">*Mật khẩu không khớp</span>
+                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <input class="input100" v-model="repass" type="password" placeholder="Nhập lại mật khẩu"/>
+                            </div>
+                            <div class="form-group" >
+                                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+                                <label  for="agree-term" class="input100 label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
                             </div>
                             <div class="form-group form-button">
-                                <button  @click="login()" name="signin" id="signin" class="form-submit" > Đăng Nhập</button>
+                                <button @click="register()" name="signup" id="signup" class="form-submit" style="border:none">Đăng Ký</button>
                             </div>
                         </div>
-                        <div class="social-login">
-                            <span class="social-label">Or login with</span>
-                            <ul class="socials">
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
-                            </ul>
-                        </div>
+                    </div>
+                    <div class="signup-image">
+                        <figure><img src="@/assets/images/signup-image.jpg" alt="sing up image"></figure>
+                        <router-link to="/login" class="signup-image-link">Đăng nhập với tài khoản</router-link>
                     </div>
                 </div>
             </div>
         </section>
-  </div>
+    </div>
 </template>
 
 <script>
 
 import axios from 'axios'
-import {mapActions} from 'vuex'
 
 export default {
-
-    data() {
-        return {
-            username:'',
-            password:'',
-            mess:''
-        }
-    },
-    methods: {
-      ...mapActions(['updateLogined']),
-      
-      login:function() {
-            this.mess = ''
-
-            if (this.username == '' || this.password == '') {
-                this.mess = "*Tài khoản hoặc mật khẩu đang trống!";
-                return;
-            }
-
-            var user = {
-                "username" : this.username,
-                "password" : this.password
-            }
-            axios.post('http://127.0.0.1:10000/api/v1/user/login', user)
-            .then(response=>{
-                if(response.status == 200) {
-                    var data = response.data;
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('displayName', data.displayName);
-                    localStorage.setItem('avatar', data.avatar);
-                    localStorage.setItem('isLogin', 1)
-
-                    this.updateLogined();
-
-                    this.$router.push('/counter-list');
-                }
-                if(response.status != 200){
-                    console.log('login fail')
-                    this.mess = '*Tài khoản hoặc mật khẩu không đúng!'
-                }
-
-            }).catch(
-              this.mess = "*Tài khoản hoặc mật khẩu không đúng!"                
-                
-            )
-        }
-    },
-    created() {
-      localStorage.setItem('token', '');
-      localStorage.setItem('displayName', '');
-      localStorage.setItem('avatar', '');
-      localStorage.setItem('isLogin', 0);
-
-      window.localStorage.removeItem("token");
-      window.localStorage.removeItem("displayName");
-      window.localStorage.removeItem("avatar");
-      window.localStorage.removeItem("isLogin");
-
-      this.updateLogined();
+  data() {
+    return {
+      firstname:'',
+      lastname:'',
+      username:'',
+      password:'',
+      repass:'',
+      checkpass: true,
+      showDismissibleAlert: false
     }
+  },
+  watch: {
+    repass:function(){
+      if(this.password != this.repass) this.checkpass = false;
+      else this.checkpass = true;
+      console.log(this.checkpass);
+    }
+  },
+  methods: {
+    register() {
+      let firstname = this.firstname;
+      let lastname = this.lastname;
+      let username = this.username;
+      let password = this.password;
+      let repass = this.repass;
+
+      if (firstname == '' || lastname == '' || username == '' || password == '' || repass == '') {
+        this.$alert('Thiếu dữ liệu!')
+        return
+      }
+
+      if (password != repass) {
+        this.$alert('Mật khẩu nhập lại không đúng!')
+        return
+      }
+
+      var user = {
+        "firstName": firstname,
+        "lastName": lastname,
+        "username": username,
+        "password": password
+      }
+      axios.post('http://127.0.0.1:10000/api/v1/user/register/customer', user)
+      .then(response=>{
+        var data = response.data.data;
+        console.log(data);
+        let path = '/register/active-account/'+username;
+        this.$router.push(path);        
+      }).catch(error => {
+        if (error.response.status == 500) {
+          this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
+        }
+        if (error.response.status == 400) {
+          this.showDismissibleAlert = true;
+        }
+      })
+    }
+    
+  }
 }
 </script>
+
 <style scoped>
+
+.noticepass {
+  display: none;
+
+}
+
 /* @extend display-flex; */
 display-flex, .display-flex, .display-flex-center, .signup-content, .signin-content, .social-login, .socials {
   display: flex;
@@ -289,7 +302,7 @@ figure {
   display: inline-block;
   background: #6dabe4;
   color: #fff;
-  border: none;
+  border-bottom: none;
   width: auto;
   padding: 15px 39px;
   border-radius: 5px;

@@ -5,6 +5,9 @@ import VueSimpleAlert from "vue-simple-alert";
 
 Vue.use(VueSimpleAlert);
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";

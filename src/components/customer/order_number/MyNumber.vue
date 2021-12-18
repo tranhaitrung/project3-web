@@ -11,7 +11,7 @@
                     <p class="label">Tên quầy: <span style="color:#01700C; font-weight: 700; text-align:center">{{ counterName }}</span> </p>
                     <p class="label">Tên khách hàng: <span style="color:#01700C; font-weight: 700;">{{ fullNameCustomer }}</span></p>
                 </div>
-                <button class="button" @click="xacnhan()">Xác Nhận</button>
+                <button class="button" @click="xacnhan()">TRANG CHỦ</button>
                 
             </div>
         </div>

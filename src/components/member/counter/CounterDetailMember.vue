@@ -34,7 +34,7 @@
                         <div style="padding-top:10px"><p style="text-align:center; font-size:28px; font-weight:600">Danh sách số chờ</p></div>
                         <div class="list-number">
                             <div v-for="(wait, index) in waittings" :key="w+index">
-                                <h4>{{index+1}}. {{wait.number}} - {{wait.serviceName}}</h4>
+                                <h4>{{index+1}}. {{wait.number}} - {{wait.fullNameCustomer}}</h4>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                         </div>
                         <div class="list-number">
                             <div v-for="(missed, index) in misseds" :key="m+index">
-                                <h4>{{index+1}}. {{missed.number}} - {{missed.serviceName}}</h4>
+                                <h4>{{index+1}}. {{missed.number}} - {{missed.fullNameCustomer}}</h4>
                             </div>
                         </div>
                     </div>
@@ -86,6 +86,10 @@ export default {
                 this.waittings = data.waitingCustomerList;
                 this.misseds = data.missedCustomerList;
             }
+        }).catch(error=> {
+                if(error.response.status == 401) {
+                this.$router.push('/login');
+                }
         })
 
         

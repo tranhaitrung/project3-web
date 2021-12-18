@@ -1,135 +1,179 @@
 <template>
-    <div>
-        <section class="signup" id="sign-up" style=" margin-top: 0px;">
+  <div>
+      <!-- Sing in  Form -->
+        <section class="sign-in" id="sign-in">
             <div class="container-login">
-                <div class="signup-content">
-                    <div class="signup-form">
-                        <h2 class="form-title">Đăng ký</h2>
-                        
-                            <b-alert
-                              variant="danger"
-                              dismissible
-                              fade
-                              :show="showDismissibleAlert"
-                              @dismissed="showDismissibleAlert=false">
-                              Email đã được sử dụng!
-                            </b-alert>
+                <div class="signin-content">
+                    <div class="signin-image">
+                        <figure><img src="@/assets/images/signin-image.jpg" alt="sing up image"></figure>
+                        <router-link to="/register" class="signup-image-link">Tạo tài khoản mới</router-link>
+                    </div>
 
-                        <div class="register-form validate-form" id="register-form" >
-                            <div class="form-group" data-validate="First Name is required">
-                                <label for="first-name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input class="input100" v-model="firstname" type="text" placeholder="First Name"/>
+                    <div class="signin-form">
+                        <h2 class="form-title">Đăng nhập</h2>
+                        <div class="register-form" id="login-form" >
+                            
+                            <div style="font-family: roboto; color: red; height: 30px; margin-top: -30px;">
+                                <p id="login_fail" style="color: red;">{{ mess }}</p>
                             </div>
-                            <div class="form-group" data-validate="Last Name is required">
-                                <label for="last-name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input class="input100" v-model="lastname" type="text" placeholder="Last Name"/>
+
+                            <div class="form-group">
+                                <label for="user_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="email" v-model="username"  name="username" id="user_name" placeholder="Email" required/>
                             </div>
-                            <div class="form-group" data-validate="Email is required">
-                                <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input class="input100" v-model="username" type="email" placeholder="Your Email"/>
+                            <div class="form-group">
+                                <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                                <input type="password" v-model="password" name="password" id="pass_word" placeholder="Password" required/>
                             </div>
-                            <div class="form-group" data-validate="Password is required">
-                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input class="input100" v-model="password" type="password" placeholder="Password"/>
-                            </div>
-                            <div class="form-group" data-validate="Repassword is required">
-                                <span :class="{noticepass: checkpass}" style="color:red; font-size: 13px;">*Mật khẩu không khớp</span>
-                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                                <input class="input100" v-model="repass" type="password" placeholder="Repeat your password"/>
-                            </div>
-                            <div class="form-group" >
-                                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                                <label  for="agree-term" class="input100 label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
+                            <div class="form-group" style="height:50px">
+                              <span>Đăng nhập với vai trò</span>
+                              <el-switch
+                                  style="display: block"
+                                  v-model="loginWith"
+                                  active-color="#13ce66"
+                                  inactive-color="#409EFF"
+                                  active-text="Nhân viên"
+                                  inactive-text="Khách hàng">
+                                </el-switch>
                             </div>
                             <div class="form-group form-button">
-                                <button @click="register()" name="signup" id="signup" class="form-submit" style="border:none">Đăng Ký</button>
+                                <button  @click="validate()" name="signin" id="signin" class="form-submit" > Đăng Nhập</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="signup-image">
-                        <figure><img src="@/assets/images/signup-image.jpg" alt="sing up image"></figure>
-                        <router-link to="/login" class="signup-image-link">I am already member</router-link>
+                        <div class="social-login">
+                            <span class="social-label">Or login with</span>
+                            <ul class="socials">
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
+  </div>
 </template>
 
 <script>
 
 import axios from 'axios'
+import {mapActions} from 'vuex'
 
 export default {
-  data() {
-    return {
-      firstname:'',
-      lastname:'',
-      username:'',
-      password:'',
-      repass:'',
-      checkpass: true,
-      showDismissibleAlert: false
-    }
-  },
-  watch: {
-    repass:function(){
-      if(this.password != this.repass) this.checkpass = false;
-      else this.checkpass = true;
-      console.log(this.checkpass);
-    }
-  },
-  methods: {
-    register() {
-      let firstname = this.firstname;
-      let lastname = this.lastname;
-      let username = this.username;
-      let password = this.password;
-      let repass = this.repass;
 
-      if (firstname == '' || lastname == '' || username == '' || password == '' || repass == '') {
-        this.$alert('Thiếu dữ liệu!')
-        return
-      }
-
-      if (password != repass) {
-        this.$alert('Mật khẩu nhập lại không đúng!')
-        return
-      }
-
-      var user = {
-        "firstName": firstname,
-        "lastName": lastname,
-        "username": username,
-        "password": password
-      }
-      axios.post('http://127.0.0.1:10000/api/v1/user/register/customer', user)
-      .then(response=>{
-        var data = response.data.data;
-        console.log(data);
-        let path = '/register/active-account/'+username;
-        this.$router.push(path);        
-      }).catch(error => {
-        if (error.response.status == 500) {
-          this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
+    data() {
+        return {
+            username:'',
+            password:'',
+            mess:'',
+            loginWith:false
         }
-        if (error.response.status == 400) {
-          this.showDismissibleAlert = true;
+    },
+    methods: {
+      ...mapActions(['updateLogined']),
+
+      validate:function() {
+        if (this.username == '' || this.password == '') {
+                this.mess = "*Tài khoản hoặc mật khẩu đang trống!";
+                return;
+            }
+            console.log(this.loginWith);
+            var user = {
+                "username" : this.username,
+                "password" : this.password
+            }
+
+            axios.post('http://127.0.0.1:10000/api/v1/user/validate',user)
+            .then(response => {
+              let data = response.data.data;
+              if(data.emailVerify == 0) {
+                var url = "/register/active-account/"+this.username;
+                this.$router.push(url);
+              }else{
+                this.login();
+              }
+            }) 
+            .catch(error => {
+              if(error.response.status == 401){
+                this.mess = "*Tài khoản hoặc mật khẩu không đúng!" 
+                 this.$message.error('Thông tin đăng nhập không chính xác!');
+              }
+              if(error.response.status == 500) {
+                 this.$message.error('Hệ thống đang gặp sự cố. Vui lòng thao tác sau ít phút!');
+              }
+                
+            })
+      },
+      
+      login:function() {
+            this.mess = ''
+
+            if (this.username == '' || this.password == '') {
+                this.mess = "*Tài khoản hoặc mật khẩu đang trống!";
+                return;
+            }
+
+            var user = {
+                "username" : this.username,
+                "password" : this.password
+            }
+
+            axios.post('http://127.0.0.1:10000/api/v1/user/login', user)
+            .then(response=>{
+                if(response.status == 200) {
+                    var data = response.data.data;
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('displayName', data.displayName);
+                    localStorage.setItem('avatar', data.avatar);
+                    localStorage.setItem('isLogin', 1)
+
+                    this.updateLogined();
+
+                    let role = response.data.data.roles[0];
+                    console.log(role);
+                    if (this.loginWith) {
+                      if (role == 'ADMIN' || role == 'MANAGER' || role == 'EMPLOYEE') {
+                        this.$message({
+                        message: `Đăng nhập với quyền nhân viên thành công!`,
+                        type: 'success'})
+                        this.$router.push('/member/counter-list');
+                      }else{
+                        this.$message.error("Bạn không có quyền nhân viên!")
+                      }
+                    } else{
+                      this.$message({
+                        message: `Đăng nhập thành công!`,
+                        type: 'success'})
+                      this.$router.push('/counter-list');
+                    }
+                }
+            }).catch(error=> {
+              if (error.response.status == 401) {
+                this.$message.error("Thông tin đăng nhập không chính xác!")
+              }
+              else {
+                this.$message.error('Hệ thống đang gặp sự cố. Vui lòng thao tác sau ít phút!');
+              }
+            })
         }
-      })
+    },
+    created() {
+      localStorage.setItem('token', '');
+      localStorage.setItem('displayName', '');
+      localStorage.setItem('avatar', '');
+      localStorage.setItem('isLogin', 0);
+
+      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("displayName");
+      window.localStorage.removeItem("avatar");
+      window.localStorage.removeItem("isLogin");
+
+      this.updateLogined();
     }
-    
-  }
 }
 </script>
-
 <style scoped>
-
-.noticepass {
-  display: none;
-
-}
-
 /* @extend display-flex; */
 display-flex, .display-flex, .display-flex-center, .signup-content, .signin-content, .social-login, .socials {
   display: flex;
@@ -302,7 +346,7 @@ figure {
   display: inline-block;
   background: #6dabe4;
   color: #fff;
-  border-bottom: none;
+  border: none;
   width: auto;
   padding: 15px 39px;
   border-radius: 5px;

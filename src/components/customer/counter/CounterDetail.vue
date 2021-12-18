@@ -32,7 +32,7 @@
                         <div style="padding-top:10px"><p style="text-align:center; font-size:28px; font-weight:600">Danh sách số chờ</p></div>
                         <div class="list-number">
                             <div v-for="(wait, index) in waittings" :key="w+index">
-                                <h4>{{index+1}}. {{wait.number}} - {{wait.serviceName}}</h4>
+                                <h4>{{index+1}}. {{wait.number}} - {{wait.fullNameCustomer}}</h4>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="list-number">
                             <div v-for="(missed, index) in misseds" :key="m+index">
-                                <h4>{{index+1}}. {{missed.number}} - {{missed.serviceName}}</h4>
+                                <h4>{{index+1}}. {{missed.number}} - {{missed.fullNameCustomer}}</h4>
                             </div>
                         </div>
                     </div>
@@ -64,7 +64,8 @@ export default {
             counterId: this.$route.params.counterId,
             waittings: [],
             misseds: [],
-            memberName: 'Chưa có thông tin'
+            memberName: 'Chưa có thông tin',
+            reloadCount:0
         }
     },
     created() {
@@ -85,12 +86,79 @@ export default {
                     this.waittings = data.waitingCustomerList;
                     this.misseds = data.missedCustomerList;
                     this.memberName = data.fullNameMember;
-                } 
+                }
                 
+                this.refresh()
+                
+            }).catch(error=> {
+                if(error.response.status == 401) {
+                this.$router.push('/login');
+                }
             })
     },
     methods: {
+        // reloadAPI:function() {
+        //     let url = 'http://127.0.0.1:10000/api/v1/counter/detail?counterId='+this.counterId;
+        //     let token = 'Bearer ' +localStorage.getItem('token');
+        //     axios.get(url, {
+        //         headers: {
+        //             Authorization: token
+        //         }
+        //     }).then(response => {
+        //         let data = response.data.data;
+        //         this.counterName = data.name;
+        //         if (response.data.message != 'INACTIVE') {
+        //             this.customerName = data.fullNameCustomer;
+        //             this.number = data.orderNumber;
+        //             this.counterName = data.counterName;
+        //             this.serviceName = data.serviceName;
+        //             this.waittings = data.waitingCustomerList;
+        //             this.misseds = data.missedCustomerList;
+        //             this.memberName = data.fullNameMember;
+        //         } 
+                
+        //     }).catch(error=> {
+        //         if(error.response.status == 401) {
+        //         this.$router.push('/login');
+        //         }
+        //     })
+        // },
+        refresh(){
+            setInterval(()=> {
+                let url = 'http://127.0.0.1:10000/api/v1/counter/detail?counterId='+this.counterId;
+                let token = 'Bearer ' +localStorage.getItem('token');
+                axios.get(url, {
+                    headers: {
+                        Authorization: token
+                    }
+                }).then(response => {
+                    let data = response.data.data;
+                    this.counterName = data.name;
+                    if (response.data.message != 'INACTIVE') {
+                        this.customerName = data.fullNameCustomer;
+                        this.number = data.orderNumber;
+                        this.counterName = data.counterName;
+                        this.serviceName = data.serviceName;
+                        this.waittings = data.waitingCustomerList;
+                        this.misseds = data.missedCustomerList;
+                        this.memberName = data.fullNameMember;
+                    } 
+                    
+                }).catch(error=> {
+                    if(error.response.status == 401) {
+                    this.$router.push('/login');
+                    }
+                })
+            }, 30000);
+        }
     }
+    // computed: {
+    //     todo() {
+    //         this.refresh;
+    //         console.log("resfes")
+    //         return this.reloadCount;
+    //     }
+    // }
 }
 </script>
 

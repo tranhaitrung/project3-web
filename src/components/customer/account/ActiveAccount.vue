@@ -12,18 +12,6 @@
                 
             </div>
         </div>
-
-        <div class="container justify-content-center service-list">
-                <div class="align-items-center service" v-for="(service, index) in services" :key="index">
-                    <div @click="showMsgBoxTwo(service.serviceCode, service.serviceName)">
-                        <img style="width: 200px; height: 200px; margin-left: 35px;" :src="service.image" alt="">
-                        <div style="margin-top: 35px; text-align: center;">{{ service.serviceName }}</div>
-                    </div>
-                    
-        
-                </div>
-               
-            </div>
     </div>
 </template>
 
@@ -37,24 +25,6 @@ export default {
         }
     },
     methods: {
-        showMsgBoxTwo() {
-            this.$bvModal.msgBoxConfirm('Bạn đã kích hoạt tài khoản thành công', {
-                title: 'Xác nhận lấy số',
-                size: 'sm',
-                buttonSize: 'sm',
-                okVariant: 'success',
-                okTitle: 'Xác Nhận',
-                //cancelTitle: 'Hủy',
-                footerClass: 'p-2',
-                hideHeaderClose: false,
-                centered: true
-            })
-            .then(value => {
-                if(value == true) {
-                    this.$router.push('/login');
-                }
-            })
-        },
         avtiveAccount: function() {
             
             if(this.code == '') return;
@@ -67,7 +37,11 @@ export default {
             axios.post('http://127.0.0.1:10000/api/v1/user/active-account',VerifyDTO).then(response => {
                 console.log(response);
                 if(response.data.statusCode == 200) {
-                   this.showMsgBoxTwo() 
+                   this.$alert("Bạn đã kích hoạt thành công. Vui lòng đặp nhập để sử dụng dịch vụ!").then(value=>{
+                       if(value == 1) {
+                           this.$router.push('/login')
+                       }
+                   }) 
                 }
                 else {
                     this.$alert(response.data.message);

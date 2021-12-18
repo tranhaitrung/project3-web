@@ -78,29 +78,25 @@ export default {
             }
             axios.post('http://127.0.0.1:10000/api/v1/user/login', user)
             .then(response=>{
-              let roles = response.data.roles;
-              console.log(roles);
-              
-                if(response.status == 200) {
-                    var data = response.data;
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('displayName', data.displayName);
-                    localStorage.setItem('avatar', data.avatar);
-                    localStorage.setItem('isLogin', 1)
+              let role = response.data.data.roles[0];
+              console.log(role);
+              if (role == 'ADMIN' || role == 'MANAGER' || role == 'EMPLOYEE') {
+                console.log('success')
+              }
+              var data = response.data.data;
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('displayName', data.displayName);
+              localStorage.setItem('avatar', data.avatar);
+              localStorage.setItem('isLogin', 1)
 
-                    this.updateLogined();
+              this.updateLogined();
 
-                    this.$router.push('/member/counter-list');
-                }
-                if(response.status != 200){
-                    console.log('login fail')
-                    this.mess = '*Tài khoản hoặc mật khẩu không đúng!'
-                }
-
-            }).catch(
-              this.mess = "*Tài khoản hoặc mật khẩu không đúng!"                
-                
-            )
+              this.$router.push('/member/counter-list');
+            }).catch(error=>{
+              if (error.response.status == 401) {
+                this.mess = "*Tài khoản hoặc mật khẩu không đúng!"
+              }
+            })
         }
     },
     created() {

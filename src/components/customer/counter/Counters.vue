@@ -6,12 +6,12 @@
                     <p class="text-center">Quầy giao dịch</p>
             </div>
             <div class="container justify-content-center" style="display: flex; margin-top: 30px;">
-                <button id="number" class="mybutton" style="height: 40px; width: 150px; font-size: 25px; font-weight: 500;" @click="getService()" >Lấy Số</button>
+                <el-button id="number" @click="getService()" type="primary" style=" font-size: 25px;width:200px">Lấy Số</el-button>
             </div>
             <div class="container justify-content-center" style="display: flex; flex-wrap: wrap; margin-top: 30px; font-weight: 700; font-size: 35px;">
                 <div  class="counter" v-for="(counter, index) in counters" :key="index">
                     <div style="margin-top: 35px; text-align: center;">{{ counter.name }}</div>
-                    <p style="text-align: center; font-size: 15px; color: green"> {{ counter.status }}</p>
+                    <p style="text-align: center; font-size: 18px; color: green"> {{ counter.serviceName }}</p>
                     <div style="font-weight: 200; font-size: 20px; padding: 10px; margin-top: 30px; height:90px">
                         <p style="font-weight: bold;">Nhân viên</p>
                         <p  style="color: #01700C; font-weight:bold; font-size: 25px; margin-top: -15px; text-align: center;"> {{ counter.fullNameMember }}</p>
@@ -22,7 +22,8 @@
                         <p  style="color: #01700C; font-weight:bold; font-size: 25px; margin-top: -15px; text-align: center;"> {{ counter.fullNameCustome }}</p>
                     </div>
                     <div class="div-button">
-                        <button @click="activeCounter(counter.id)" class="mybutton" style="padding: 2px 10px;">Kích hoạt quầy</button>
+                        <el-button @click="deatailCounter(counter.id)" style="padding: 8px 10px; font-size: 20px;" v-if="counter.status === 'ACTIVE'" type="success" plain>Chi tiết quầy</el-button>
+                        <el-button v-else-if="counter.status === 'INACTIVE'" type="danger" plain disabled>Quầy chưa hoạt động</el-button>
                     </div>
                 </div>            
             </div>
@@ -45,28 +46,28 @@ export default {
             this.$router.push('/service-list');
         },
 
-        activeCounter(id) {
-            let url = 'http://127.0.0.1:10000/api/v1/active-counter?counterId='+id;
-            let token = 'Bearer ' +localStorage.getItem('token');
-            axios.get(url, {
-                headers: {
-                    Authorization: token
-                }
-            }).then(reponse => {
-                console.log(reponse);
-                this.$router.push('/member/counter/counter-detail/'+id);
+        deatailCounter(id) {
+            this.$router.push('/counter/counter-detail/'+id);
+        },
+
+        refreshScreen() {
+            setInterval(()=> {
+                let token = 'Bearer ' +localStorage.getItem('token'); 
+                axios.get('http://127.0.0.1:10000/api/v1/counter/get-all', {
+                    headers: {
+                        Authorization: token
+                    }
+                }).then(reponse => {
                 
-            }).catch(error => {
-                if (error.response.status == 500) {
-                    this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
-                }
-                if (error.response.status == 403) {
-                    this.$alert("Bạn không đủ quyền để sử dụng chức năng này. Vui lòng liên hệ ADMIN hoặc MANAGER để được giải quyết!")
-                }
-                if (error.response.status == 401) {
-                    this.$alert("Vui lòng đăng nhập để sử dụng chức năng");
-                }
-            })  
+                    var list = reponse.data.data;
+                    this.counters = list;
+                    
+                }).catch(error => {
+                    if (error.response.status == 500) {
+                        this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
+                    }
+                })  
+            },30000)
         }
     },
     created() {
@@ -85,7 +86,13 @@ export default {
                 if (error.response.status == 500) {
                     this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
                 }
+                else {
+                    this.$router.push('/server-updating');
+                }
+                
             })  
+            
+            //this.refreshScreen()
     }
 }
 </script>
