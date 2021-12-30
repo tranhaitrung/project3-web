@@ -152,6 +152,8 @@
 <script>
 import axios from 'axios'
 import _ from 'lodash';
+import urlHostAPI from '/src/url.js'
+
 export default {
     data() {
         return {
@@ -161,7 +163,7 @@ export default {
                 serviceName:'Trống',
                 counterName:'Trống',
                 status:'Trống',
-                createdAt:'00/00/00',
+                createdAt:'',
                 score:''
 
 
@@ -172,9 +174,9 @@ export default {
             fromDate:'',
             toDate:'',
             status:'',
-            pageNo:'',
+            pageNo:'1',
             pageSize:'7',
-            totalPage: 1,
+            totalPage: '',
             filter:false,
             statusOptions: [{
                 value: 'DONE',
@@ -200,7 +202,7 @@ export default {
     }, 
     created() {
         let token = 'Bearer ' +localStorage.getItem('token');
-        axios.get(`http://127.0.0.1:10000/api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
+        axios.get(`${urlHostAPI}api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
             headers:{
                 Authorization: token
             }
@@ -216,7 +218,7 @@ export default {
             this.$router.push('/server-updating')
         })
 
-        axios.get(`http://127.0.0.1:10000/api/v1/service/get-list`)
+        axios.get(`${urlHostAPI}api/v1/service/get-list`)
         .then(response => {
             var data = response.data.data;
             console.log(data)
@@ -245,7 +247,7 @@ export default {
         handleCurrentChange(val) {
             this.pageNo = val;
             let token = 'Bearer ' +localStorage.getItem('token');
-            axios.get(`http://127.0.0.1:10000/api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
+            axios.get(`${urlHostAPI}api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
                 headers:{
                     Authorization: token
                 }
@@ -269,7 +271,7 @@ export default {
             // this.fromDate = this.fromDate != null ? new Date(this.fromDate).toJSON() : '';
             // this.toDate = this.toDate != null ? new Date(this.toDate).toJSON() : '';
             let token = 'Bearer ' +localStorage.getItem('token');
-            axios.get(`http://127.0.0.1:10000/api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
+            axios.get(`${urlHostAPI}api/v1/my-list-number?search=${this.search}&userId=${this.userId}&serviceCode=${this.serviceCode}&fromDate=${this.fromDate}&toDate=${this.toDate}&status=${this.status}&pageNo=${this.pageNo}&pageSize=${this.pageSize}`, {
                 headers:{
                     Authorization: token
                 }
@@ -298,7 +300,7 @@ export default {
             }
 
             let token = 'Bearer ' +localStorage.getItem('token');
-            axios.post('http://127.0.0.1:10000/api/v1/feedback/customer',
+            axios.post(`${urlHostAPI}api/v1/feedback/customer`,
             feedbackDTO,
             {
                 headers:{

@@ -59,6 +59,7 @@
 
 import axios from 'axios'
 import {mapActions} from 'vuex'
+import urlHostAPI from '/src/url.js'
 
 export default {
 
@@ -84,7 +85,7 @@ export default {
                 "password" : this.password
             }
 
-            axios.post('http://127.0.0.1:10000/api/v1/user/validate',user)
+            axios.post(`${urlHostAPI}api/v1/user/validate`,user)
             .then(response => {
               let data = response.data.data;
               if(data.emailVerify == 0) {
@@ -119,7 +120,7 @@ export default {
                 "password" : this.password
             }
 
-            axios.post('http://127.0.0.1:10000/api/v1/user/login', user)
+            axios.post(`${urlHostAPI}api/v1/user/login`, user)
             .then(response=>{
                 if(response.status == 200) {
                     var data = response.data.data;

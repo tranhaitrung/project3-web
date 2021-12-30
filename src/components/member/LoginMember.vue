@@ -51,6 +51,7 @@
 
 import axios from 'axios'
 import {mapActions} from 'vuex'
+import urlHostAPI from '/src/url.js'
 
 export default {
 
@@ -76,7 +77,7 @@ export default {
                 "username" : this.username,
                 "password" : this.password
             }
-            axios.post('http://127.0.0.1:10000/api/v1/user/login', user)
+            axios.post(`${urlHostAPI}api/v1/user/login`, user)
             .then(response=>{
               let role = response.data.data.roles[0];
               console.log(role);

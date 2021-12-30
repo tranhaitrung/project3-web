@@ -24,6 +24,8 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
+
 export default {
     data() {
         return {
@@ -34,7 +36,7 @@ export default {
     methods: {
         getNumber(code) {
             //console.log(code);
-            var url = 'http://127.0.0.1:10000/api/v1/take-number?serviceCode='+code;
+            var url = `${urlHostAPI}api/v1/take-number?serviceCode=${code}`;
             let token = 'Bearer ' +localStorage.getItem('token'); 
             console.log(token)
             axios.get(url, {
@@ -44,9 +46,8 @@ export default {
             }).then(reponse => {
                 // console.log(reponse);
                     //var list = reponse.data.data;
-                    this.$alert(reponse.data.message).then(value =>{
-                        if (value == true ) this.$router.push('/order-number/my-number');
-                    })
+                    this.$message.success(reponse.data.message);
+                    this.$router.push('/order-number/my-number');
                 
             
             }).catch(error => {
@@ -54,10 +55,10 @@ export default {
                     this.showMsgBoxLogin();
                 }
                 else if (error.response.status == 500) {
-                    this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
+                    this.$message.error("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
                 }
                 else {
-                    this.$alert(error.response.data.message);
+                    this.$message.error(error.response.data.message);
                 }
             })  
             
@@ -65,9 +66,9 @@ export default {
 
         showMsgBoxTwo(serviceCode, serviceName) {
         this.serviceCode = serviceCode;
-        this.$bvModal.msgBoxConfirm('Bạn có muốn lấy số dịch vụ'+serviceName+"", {
+        this.$bvModal.msgBoxConfirm('Bạn có muốn lấy số dịch vụ '+serviceName+"", {
           title: 'Xác nhận lấy số',
-          size: 'sm',
+          size: '',
           buttonSize: 'sm',
           okVariant: 'success',
           okTitle: 'Xác Nhận',
@@ -107,7 +108,7 @@ export default {
     },
     created() {
         let token = 'Bearer ' +localStorage.getItem('token'); 
-        axios.get('http://127.0.0.1:10000/api/v1/service/get-list', {
+        axios.get(`${urlHostAPI}api/v1/service/get-list?status=ACTIVE`, {
                 headers: {
                     Authorization: token
                 }

@@ -17,6 +17,7 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
 export default {
     data() {
         return {
@@ -33,8 +34,9 @@ export default {
                 "username": this.username,
                 "verifyCode": this.code
             }
-
-            axios.post('http://127.0.0.1:10000/api/v1/user/active-account',VerifyDTO).then(response => {
+            //'http://127.0.0.1:10000/api/v1/user/active-account'
+            let url = `${urlHostAPI}api/v1/user/active-account`;
+            axios.post(url,VerifyDTO).then(response => {
                 console.log(response);
                 if(response.data.statusCode == 200) {
                    this.$alert("Bạn đã kích hoạt thành công. Vui lòng đặp nhập để sử dụng dịch vụ!").then(value=>{

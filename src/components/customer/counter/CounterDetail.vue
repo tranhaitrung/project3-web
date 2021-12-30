@@ -54,6 +54,7 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
 export default {
     data() {
         return {
@@ -69,7 +70,7 @@ export default {
         }
     },
     created() {
-        let url = 'http://127.0.0.1:10000/api/v1/counter/detail?counterId='+this.counterId;
+        let url = urlHostAPI+`api/v1/counter/detail?counterId=${this.counterId}`;
         let token = 'Bearer ' +localStorage.getItem('token');
         axios.get(url, {
                 headers: {
@@ -125,7 +126,7 @@ export default {
         // },
         refresh(){
             setInterval(()=> {
-                let url = 'http://127.0.0.1:10000/api/v1/counter/detail?counterId='+this.counterId;
+                let url = `${urlHostAPI}api/v1/counter/detail?counterId=${this.counterId}`;
                 let token = 'Bearer ' +localStorage.getItem('token');
                 axios.get(url, {
                     headers: {

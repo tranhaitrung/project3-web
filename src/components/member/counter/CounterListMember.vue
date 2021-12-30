@@ -28,7 +28,7 @@
                     <div class="div-button">
                         <button @click="createPopupActiveCounter(counter.id, counter.name)" class="mybutton" style="padding: 2px 10px;" v-if="counter.status === 'INACTIVE'">Kích hoạt quầy</button>
                      
-                        <el-button v-else-if="counter.status === 'ACTIVE'" type="primary" plain disabled>Quầy đã có nhân viên</el-button>
+                        <el-button v-else-if="counter.status === 'ACTIVE'" type="primary" plain @click="viewDetail(counter.id)">Quầy đã có nhân viên</el-button>
                     </div>
                 </div>            
             </div>
@@ -67,6 +67,8 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
+
 export default {
     data() {
         return {
@@ -84,7 +86,7 @@ export default {
         },
 
         activeCounter() {
-            let url = `http://127.0.0.1:10000/api/v1/active-counter`;
+            let url = `${urlHostAPI}api/v1/active-counter`;
             let token = 'Bearer ' +localStorage.getItem('token');
             var counterDTO = {
                 "counterId": this.counterActiveId,
@@ -119,7 +121,7 @@ export default {
         refreshScreen() {
             setInterval(()=> {
                 let token = 'Bearer ' +localStorage.getItem('token'); 
-                axios.get('http://127.0.0.1:10000/api/v1/counter/get-all', {
+                axios.get(`${urlHostAPI}api/v1/counter/get-all`, {
                     headers: {
                         Authorization: token
                     }
@@ -139,12 +141,16 @@ export default {
             this.counterActiveId = counterId;
             this.counterActiveName = counterName;
             this.activePopup = true;
+        },
+
+        viewDetail(id) {
+            this.$router.push(`/member/counter/counter-detail/${id}`)
         }
     },
     created() {
       
             let token = 'Bearer ' +localStorage.getItem('token'); 
-            axios.get('http://127.0.0.1:10000/api/v1/counter/get-all', {
+            axios.get(`${urlHostAPI}api/v1/counter/get-all`, {
                 headers: {
                     Authorization: token
                 }
@@ -159,7 +165,7 @@ export default {
                 }
             })
             
-            axios.get(`http://127.0.0.1:10000/api/v1/service/get-list`)
+            axios.get(`${urlHostAPI}api/v1/service/get-list`)
             .then(response => {
                 var data = response.data.data;
                 console.log(data)
@@ -175,7 +181,7 @@ export default {
                     this.$message.error("Hệ thống đang gặp sự cố. Vui lòng thử lại sau ít phút!")
             })
             
-            //this.refreshScreen()
+            this.refreshScreen()
     }
 }
 </script>

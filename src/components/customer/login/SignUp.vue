@@ -59,6 +59,7 @@
 <script>
 
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
 
 export default {
   data() {
@@ -103,7 +104,7 @@ export default {
         "username": username,
         "password": password
       }
-      axios.post('http://127.0.0.1:10000/api/v1/user/register/customer', user)
+      axios.post(`${urlHostAPI}api/v1/user/register/customer`, user)
       .then(response=>{
         var data = response.data.data;
         console.log(data);

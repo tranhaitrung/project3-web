@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="body" >
+        <div class="body" v-loading="isloading">
         <div class="container" id="body-customer">
             <div class="col-12"  style="color: #01700C; font-weight: 700; font-size: 35px; background-color: #FFFFFF; padding-top: 50px;">
                     <p class="text-center">Quầy giao dịch</p>
@@ -35,10 +35,12 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
 export default {
     data() {
         return {
-            counters: []
+            counters: [],
+            isloading: true
         }
     },
     methods: {
@@ -52,8 +54,10 @@ export default {
 
         refreshScreen() {
             setInterval(()=> {
-                let token = 'Bearer ' +localStorage.getItem('token'); 
-                axios.get('http://127.0.0.1:10000/api/v1/counter/get-all', {
+                let token = 'Bearer ' +localStorage.getItem('token');
+                //let url1 = 'http://127.0.0.1:10000/api/v1/counter/get-all' 
+                let url = `${urlHostAPI}api/v1/counter/get-all`
+                axios.get(url, {
                     headers: {
                         Authorization: token
                     }
@@ -71,28 +75,28 @@ export default {
         }
     },
     created() {
-      
-            let token = 'Bearer ' +localStorage.getItem('token'); 
-            axios.get('http://127.0.0.1:10000/api/v1/counter/get-all', {
-                headers: {
-                    Authorization: token
-                }
-            }).then(reponse => {
-               
-                var list = reponse.data.data;
-                this.counters = list;
-                
-            }).catch(error => {
-                if (error.response.status == 500) {
-                    this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
-                }
-                else {
-                    this.$router.push('/server-updating');
-                }
-                
-            })  
+        //http://127.0.0.1:10000/api/v1/counter/get-all
+        let token = 'Bearer ' +localStorage.getItem('token'); 
+        axios.get(`${urlHostAPI}api/v1/counter/get-all`, {
+            headers: {
+                Authorization: token
+            }
+        }).then(reponse => {
             
-            //this.refreshScreen()
+            var list = reponse.data.data;
+            this.counters = list;
+            this.isloading = false;
+        }).catch(error => {
+            if (error.response.status == 500) {
+                this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
+            }
+            else {
+                this.$router.push('/server-updating');
+            }
+            
+        })  
+        
+        this.refreshScreen()
     }
 }
 </script>

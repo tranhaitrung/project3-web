@@ -11,7 +11,7 @@
                     <p class="label">Tên quầy: <span style="color:#01700C; font-weight: 700; text-align:center">{{ counterName }}</span> </p>
                     <p class="label">Tên khách hàng: <span style="color:#01700C; font-weight: 700;">{{ fullNameCustomer }}</span></p>
                 </div>
-                <button class="button" @click="xacnhan()">TRANG CHỦ</button>
+                <button class="button" @click="home">TRANG CHỦ</button>
                 
             </div>
         </div>
@@ -20,6 +20,8 @@
 
 <script>
 import axios from 'axios'
+import urlHostAPI from '/src/url.js'
+
 export default {
     data() {
         return {
@@ -32,7 +34,7 @@ export default {
     }, 
     created() {
         let token = 'Bearer ' +localStorage.getItem('token');
-        axios.get('http://127.0.0.1:10000/api/v1/my-number', {
+        axios.get(`${urlHostAPI}api/v1/my-number`, {
             headers:{
                 Authorization: token
             }
@@ -49,6 +51,11 @@ export default {
             }
             this.$router.push('/server-updating')
         })
+    },
+    methods: {
+        home() {
+            this.$router.push("/");
+        }
     }
 }
 </script>

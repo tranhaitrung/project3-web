@@ -42,9 +42,12 @@
         <el-form :model="user" ref="user" label-width="100px" class="demo-ruleForm">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="upImage"
+            :headers="headerObj"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess" style="display:flex; justify-content:center">
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+            style="display:flex; justify-content:center">
             <img v-if="user.avatar" :src="user.avatar" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon">Đổi avatar</i>
           </el-upload>
@@ -110,6 +113,7 @@
 
 <script>
 import axios from 'axios';
+import urlHostAPI from '/src/url.js'
 
 import {mapGetters, mapActions} from 'vuex'
 export default {
@@ -131,13 +135,17 @@ export default {
           avatar:'',
           password:'',
           newPass:'',
-          rePass:''
+          rePass:'',
         },
         pickerOptions: {
           disabledDate(time) {
             return time.getTime() > Date.now();
           }
-        }
+        },
+        headerObj: {
+          Authorization: ''
+        },
+        upImage: `${urlHostAPI}api/v1/up-file`
       }
     },
     computed: {
@@ -145,24 +153,6 @@ export default {
     },
     methods: {
       ...mapActions(['updateLogined']),
-      handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
-        this.$message({
-          message: 'Cập nhật ảnh đại diện!',
-          type: 'success'})
-      },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
-
-        if (!isJPG) {
-          this.$message.error('Avatar picture must be JPG format!');
-        }
-        if (!isLt2M) {
-          this.$message.error('Avatar picture size can not exceed 2MB!');
-        }
-        return isJPG && isLt2M;
-      },
       updateInfo() {
         let token = 'Bearer ' +localStorage.getItem('token');
 
@@ -171,7 +161,8 @@ export default {
           lastName: this.user.lastName,
           address: this.user.address,
           birthday: this.user.birthday,
-          phone: this.user.phone
+          phone: this.user.phone,
+          avatar: this.user.avatar                                 
         }
         console.log(userDTO);
         var isValidated = this.validateInfor();
@@ -180,7 +171,7 @@ export default {
           return;
         }
 
-        axios.post('http://127.0.0.1:10000/api/v1/user/update-info',
+        axios.post(`${urlHostAPI}api/v1/user/update-info`,
         userDTO, 
         {
           headers:{
@@ -195,9 +186,11 @@ export default {
           this.user.phone = data.phone;
           this.user.birthday = data.birthday;
           this.user.avatar = data.avatar;
-            this.$message({
-            message: 'Cập nhật thông tin thành công!',
-            type: 'success'})
+          this.$message({
+          message: 'Cập nhật thông tin thành công!',
+          type: 'success'})
+          localStorage.setItem('avatar', data.avatar);
+          this.updateLogined();
         })
         .catch(error=>{
           if(error.response.status == 401) {
@@ -230,7 +223,7 @@ export default {
           "newPass":this.user.newPass
         }
 
-        axios.post('http://127.0.0.1:10000/api/v1/user/change-pass',
+        axios.post(`${urlHostAPI}api/v1/user/change-pass`,
         changePassDTO,
         {
           headers:{
@@ -257,6 +250,16 @@ export default {
         })
         
       },
+      handleAvatarSuccess(res) {
+        const data = res.data
+        console.log(data.sourceUrl)
+        this.user.avatar = data.sourceUrl
+        this.$message.success("Tải ảnh lên thành công!")
+      },
+
+      beforeAvatarUpload() {
+        this.headerObj.Authorization = 'Bearer ' + localStorage.getItem('token')
+      },
       validatePass() {
         let newPass = this.user.newPass;
         let rePass = this.user.rePass;
@@ -282,7 +285,7 @@ export default {
       showUpdateInfo() {
         this.outerVisible = true;
         let token = 'Bearer ' +localStorage.getItem('token');
-        axios.get('http://127.0.0.1:10000/api/v1/user/info-user-token',
+        axios.get(`${urlHostAPI}api/v1/user/info-user-token`,
         {
           headers:{
                 Authorization: token
@@ -320,7 +323,13 @@ export default {
     created() {
       console.log(localStorage.getItem('isLogin'))
       this.updateLogined();
-    }
+    },
+    
+    // upImage() {
+    //   var action = `${urlHostAPI}api/v1/up-file`;
+    //   return action
+    // },
+
 }
 </script>
 
