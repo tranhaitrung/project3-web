@@ -36,7 +36,7 @@
 
     </div>
 
-    <el-dialog
+        <el-dialog
             title="Mở quầy"
             :visible.sync="activePopup"
             width="30%">
@@ -46,7 +46,7 @@
                 </div>
                 <div class="block">
                     <span class="demonstration" style="margin-right:5%">Dịch vụ</span>
-                   <el-select v-model="serviceCodeActive" placeholder="Chọn dịch vụ" style="width:84%">
+                    <el-select v-model="serviceCodeActive" placeholder="Chọn dịch vụ" style="width:84%">
                     <el-option
                     v-for="item in serviceCodeOptions"
                     :key="item.value"
@@ -105,14 +105,14 @@ export default {
                 this.$router.push(`/member/counter/counter-detail/${this.counterActiveId}`);
                 
             }).catch(error => {
-                if (error.response.status == 500) {
+                if (error.response.status === 500) {
                     this.$message.error("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
                 }
-                if (error.response.status == 403) {
+                if (error.response.status === 403) {
                     this.$message.error("Bạn không đủ quyền để sử dụng chức năng này. Vui lòng liên hệ ADMIN hoặc MANAGER để được giải quyết!")
                 }
                
-                if(error.response.status == 401) {
+                if(error.response.status === 401) {
                 this.$router.push('/login');
                 }
             })  
@@ -131,7 +131,7 @@ export default {
                     this.counters = list;
                     
                 }).catch(error => {
-                    if (error.response.status == 500) {
+                    if (error.response.status === 500) {
                         this.$$message.error("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
                     }
                 })  
@@ -160,7 +160,7 @@ export default {
                 this.counters = list;
                 
             }).catch(error => {
-                if (error.response.status == 500) {
+                if (error.response.status === 500) {
                     this.$alert("Hệ thống đang được nâng cấp, Vui lòng thử lại sau!")
                 }
             })
@@ -177,7 +177,7 @@ export default {
                 }
 
             }).catch(error=> {
-                if (error.response.status == 500)
+                if (error.response.status === 500)
                     this.$message.error("Hệ thống đang gặp sự cố. Vui lòng thử lại sau ít phút!")
             })
             
